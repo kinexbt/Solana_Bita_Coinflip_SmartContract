@@ -1,8 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{program::invoke, system_instruction::transfer};
-use anchor_spl::token;
-use sha2::Digest;
-use sha2::Sha256;
+// use sha2::Digest;
+// use sha2::Sha256;
 use solana_program::program::invoke_signed;
 use std::cmp::Ordering;
 
@@ -30,48 +29,6 @@ pub fn sol_transfer_user<'a>(
     Ok(())
 }
 
-pub fn token_transfer_user<'a>(
-    from: AccountInfo<'a>,
-    authority: AccountInfo<'a>,
-    to: AccountInfo<'a>,
-    token_program: AccountInfo<'a>,
-    amount: u64,
-) -> Result<()> {
-    let cpi_ctx: CpiContext<_> = CpiContext::new(
-        token_program,
-        token::Transfer {
-            from,
-            authority,
-            to,
-        },
-    );
-    token::transfer(cpi_ctx, amount)?;
-
-    Ok(())
-}
-
-pub fn token_transfer_with_signer<'a>(
-    from: AccountInfo<'a>,
-    authority: AccountInfo<'a>,
-    to: AccountInfo<'a>,
-    token_program: AccountInfo<'a>,
-    signers: &[&[&[u8]]; 1],
-    amount: u64,
-) -> Result<()> {
-    let cpi_ctx: CpiContext<_> = CpiContext::new_with_signer(
-        token_program,
-        token::Transfer {
-            from,
-            authority,
-            to,
-        },
-        signers,
-    );
-    token::transfer(cpi_ctx, amount)?;
-
-    Ok(())
-}
-
 pub fn puffed_out_string(s: &String, size: usize) -> String {
     let mut array_of_zeroes = vec![];
 
@@ -88,28 +45,28 @@ pub struct HashStruct {
     pub initial_seed: u64,
 }
 
-unsafe fn any_as_u8_slice<T: Sized>(p: &T) -> &[u8] {
-    ::std::slice::from_raw_parts((p as *const T) as *const u8, ::std::mem::size_of::<T>())
-}
+// unsafe fn any_as_u8_slice<T: Sized>(p: &T) -> &[u8] {
+//     ::std::slice::from_raw_parts((p as *const T) as *const u8, ::std::mem::size_of::<T>())
+// }
 
-pub fn get_rand(seed: u64, nonce: u64) -> u64 {
-    let hashstruct = HashStruct {
-        nonce,
-        initial_seed: seed,
-    };
-    let vec_to_hash = unsafe { self::any_as_u8_slice(&hashstruct) };
-    let hash = &(Sha256::new().chain_update(vec_to_hash).finalize()[..32]);
+// pub fn get_rand(seed: u64, nonce: u64) -> u64 {
+//     let hashstruct = HashStruct {
+//         nonce,
+//         initial_seed: seed,
+//     };
+//     let vec_to_hash = unsafe { self::any_as_u8_slice(&hashstruct) };
+//     let hash = &(Sha256::new().chain_update(vec_to_hash).finalize()[..32]);
 
-    // hash is a vector of 32 8bit numbers.  We can take slices of this to generate our 4 random u64s
-    let mut hashed_randoms: [u64; 4] = [0; 4];
-    for i in 0..4 {
-        let hash_slice = &hash[i * 8..(i + 1) * 8];
-        hashed_randoms[i] =
-            u64::from_le_bytes(hash_slice.try_into().expect("slice with incorrect length"));
-    }
+//     // hash is a vector of 32 8bit numbers.  We can take slices of this to generate our 4 random u64s
+//     let mut hashed_randoms: [u64; 4] = [0; 4];
+//     for i in 0..4 {
+//         let hash_slice = &hash[i * 8..(i + 1) * 8];
+//         hashed_randoms[i] =
+//             u64::from_le_bytes(hash_slice.try_into().expect("slice with incorrect length"));
+//     }
 
-    return hashed_randoms[2] % 1000000;
-}
+//     return hashed_randoms[2] % 1000000;
+// }
 
 pub fn resize_account<'info>(
     account_info: AccountInfo<'info>,

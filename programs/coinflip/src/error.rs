@@ -2,20 +2,28 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum GameError {
-    #[msg("Invalid Player Pool Owner")] // 6000
-    InvalidPlayerPool,
-    #[msg("Invalid Admin to Withdraw")] // 6001
-    InvalidAdmin,
-    #[msg("Invalid Claim to Withdraw Reward")] // 6002
-    InvalidClaim,
-    #[msg("Invalid Reward Vault to receive")] // 6003
-    InvalidLoyaltyWallet,
-    #[msg("Insufficient Reward SOL Balance")] // 6004
-    InsufficientRewardVault,
-    #[msg("Insufficient User SOL Balance")] // 6005
-    InsufficientUserBalance,
-    #[msg("Invalid bet amount")] // 6006
+    #[msg("Invalid bet amount")] // 6000
     InvalidBetAmount,
-    #[msg("Invalid token mint address")] // 6007
-    InvalidTokenMintAddress,
+    #[msg("Invalid bet amount violating MaxWinAmount")] // 6001
+    InvalidBetAmountMaxWinAmountViolation,
+    #[msg("Insufficient User SOL Balance")] // 6002
+    InsufficientUserBalance,
+    #[msg("Insufficient Casino Bank SOL Balance")] // 6003
+    InsufficientCasinoVault,
+    #[msg("Mismatching Round Number")] // 6004
+    RoundNumMismatch,
+    #[msg("Not allowed to double bet")] // 6005
+    NotAllowedDoubleBet,
+    #[msg("Not Original Player")] // 6006
+    NotOriginalPlayer,
+    #[msg("Not Allowed Game Status")] // 6007
+    NotAllowedStatus,
+    #[msg("Invalid RTP")] // 6008
+    InvalidRtp,
+    #[msg("Only Operation Admin can call this")] // 6009
+    UnauthorizedOperator,
+    #[msg("Only Financial Admin can call this")] // 6010
+    UnauthorizedFinanceAdmin,
+    #[msg("Only Update Admin can call this")] // 6011
+    UnauthorizedUpdateAdmin,
 }

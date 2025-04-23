@@ -4,15 +4,15 @@
 resolution = true
 skip-lint = false
 
-[programs.devnet]
-coinflip = "8QvsmhwMtFXYZn2LZzaUgSenBuHfoEeAtJcr1qtRr3wj"
+[programs.localnet]
+coinflip = "2yGiLmgFhZvHvLYMshTwcAsZ9Ja2wNxxQiSWKhmPmqZe"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
-wallet = "../key/G2.json"
+cluster = "localnet"
+wallet = "./1.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

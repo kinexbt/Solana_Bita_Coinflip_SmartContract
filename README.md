@@ -1,4 +1,4 @@
-# Deezkits-Coinflip-Contract
+# Bita-Coinflip-Contract
 
 ## Install Dependencies
 - Install `node` and `yarn`
@@ -23,47 +23,19 @@ In the folder `coinflip`, in the terminal
 1. `yarn`
 
 2. `anchor build`
-   In the last sentence you can see:  
-```
-To deploy this program:
-  $ solana program deploy /home/ubuntu/apollo/coinflip/target/deploy/coinflip.so
-The program address will default to this keypair (override with --program-id):
-  /home/ubuntu/apollo/coinflip/target/deploy/coinflip-keypair.json
-```  
-3. `solana-keygen pubkey /home/ubuntu/apollocoinflip/target/deploy/coinflip-keypair.json`
+3. `solana-keygen pubkey ../keys/G2.json`
 4. You can get the pubkey of the `program ID : ex."5N...x6k"`
 5. Please add this pubkey to the lib.rs
-  `line 17: declare_id!("5N...x6k");`
+  `line 16: declare_id!("5N...x6k");`
 6. Please add this pubkey to the Anchor.toml
-  `line 4: staking = "5N...x6k"`
+  `line 4: coinflip = "5N...x6k"`
 7. Please add this pubkey to the types.ts
   `line 6: export const STAKING_PROGRAM_ID = new PublicKey("5N...x6k");`
   
 8. `anchor build` again
-9. `solana program deploy /home/.../backend/target/deploy/staking.so`
+9. `anchor deploy`
 
 <p align = "center">
 Then, you can enjoy this program 🎭
 </p>
 </br>
-
-## How to use?
-
-### A Project Owner
-First of all, open the directory and `yarn`
-
-#### Initproject
-
-```js
-    yarn ts-node initialize -e devnet -r https://api.devnet.solana.com -k /home/ubuntu/fury/deploy-keypair.json
-```
-
-#### Update
-```js
-yarn ts-node update -a Am9xhPPVCfDZFDabcGgmQ8GTMdsbqEt1qVXbyhTxybAp -f 2.5 -e devnet -r https://api.devnet.solana.com -k /home/ubuntu/fury/deploy-keypair.json
-```
-
-#### Withdraw
-```js
-yarn ts-node withdraw -a 2.5 -e devnet -r https://api.devnet.solana.com -k /home/ubuntu/fury/deploy-keypair.json
-```

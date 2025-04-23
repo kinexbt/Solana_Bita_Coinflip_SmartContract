@@ -4,9 +4,11 @@
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "script": "export ANCHOR_WALLET=../key/G2.json && ts-node ./cli/command.ts"
     },
+    "type": "module",
     "dependencies": {
-        "@coral-xyz/anchor": "^0.30.1",
+        "@coral-xyz/anchor": "0.31.0",
         "@solana/spl-token": "^0.3.8",
+        "bs58": "^6.0.0",
         "commander": "^9.4.1"
     },
     "devDependencies": {
