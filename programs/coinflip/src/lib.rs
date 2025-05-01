@@ -12,7 +12,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("7EjF94dboc534qg697pBZuSMpxp9gZeCsiRrPTju1AdM");
+declare_id!("2yGiLmgFhZvHvLYMshTwcAsZ9Ja2wNxxQiSWKhmPmqZe");
 
 #[program]
 pub mod coinflip {
@@ -49,7 +49,12 @@ pub mod coinflip {
             head_or_tail: indicate whether the player bet on head or tail       0: Tail, 1: Head
             bet_amount:    The SOL amount to deposit
     */
-    pub fn play_game(ctx: Context<PlayGame>, is_head: bool, bet_amount: u64, game_session_id: u64) -> Result<()> {
+    pub fn play_game(
+        ctx: Context<PlayGame>,
+        is_head: bool,
+        bet_amount: u64,
+        game_session_id: u64,
+    ) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let player = &ctx.accounts.owner;
         let global_authority = &ctx.accounts.global_authority;
@@ -128,7 +133,12 @@ pub mod coinflip {
     /**
     The setting result function to determine whether player Win or Lose
     */
-    pub fn set_result(ctx: Context<SetResult>, round_id: u8, is_win: bool, game_session_id: u64) -> Result<()> {
+    pub fn set_result(
+        ctx: Context<SetResult>,
+        round_id: u8,
+        is_win: bool,
+        game_session_id: u64,
+    ) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let game_bump = ctx.bumps.game_vault;
         let casino_bump = ctx.bumps.casino_vault;
@@ -172,9 +182,15 @@ pub mod coinflip {
 
             player_pool.status = GameStatus::Lose;
 
-            // Here, add closePda function
-            // **game_vault.to_account_info().try_borrow_mut_lamports()? = 0;
-            // **player_pool.to_account_info().try_borrow_mut_lamports()? = 0;
+            let dest_starting_lamports = ctx.accounts.game_vault.lamports();
+            **ctx.accounts.game_vault.lamports.borrow_mut() = dest_starting_lamports
+                .checked_add(player_pool.to_account_info().lamports())
+                .unwrap();
+            **player_pool.to_account_info().lamports.borrow_mut() = 0;
+
+            let player_pool_account_info = player_pool.to_account_info();
+            let mut account_data = player_pool_account_info.try_borrow_mut_data()?;
+            account_data.fill(0);
         }
 
         Ok(())
@@ -254,10 +270,6 @@ pub mod coinflip {
         )?;
 
         player_pool.status = GameStatus::Finished;
-
-        // Add the closing PDA part
-        // **game_vault.to_account_info().try_borrow_mut_lamports()? = 0;
-        // **player_pool.to_account_info().try_borrow_mut_lamports()? = 0;
 
         let dest_starting_lamports = ctx.accounts.game_vault.lamports();
         **ctx.accounts.game_vault.lamports.borrow_mut() = dest_starting_lamports
