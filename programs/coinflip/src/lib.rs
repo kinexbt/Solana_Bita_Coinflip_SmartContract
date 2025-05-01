@@ -12,7 +12,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("2yGiLmgFhZvHvLYMshTwcAsZ9Ja2wNxxQiSWKhmPmqZe");
+declare_id!("7EjF94dboc534qg697pBZuSMpxp9gZeCsiRrPTju1AdM");
 
 #[program]
 pub mod coinflip {
@@ -49,7 +49,7 @@ pub mod coinflip {
             head_or_tail: indicate whether the player bet on head or tail       0: Tail, 1: Head
             bet_amount:    The SOL amount to deposit
     */
-    pub fn play_game(ctx: Context<PlayGame>, is_head: bool, bet_amount: u64) -> Result<()> {
+    pub fn play_game(ctx: Context<PlayGame>, is_head: bool, bet_amount: u64, game_session_id: u64) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let player = &ctx.accounts.owner;
         let global_authority = &ctx.accounts.global_authority;
@@ -113,12 +113,12 @@ pub mod coinflip {
         if is_head == true {
             msg!(
                 "User's choice is Head, bet amount is {}SOL",
-                bet_amount / LAMPORTS_PER_SOL
+                bet_amount as f64 / LAMPORTS_PER_SOL as f64
             );
         } else {
             msg!(
                 "User's choice is Tail, bet amount is {}SOL",
-                bet_amount / LAMPORTS_PER_SOL
+                bet_amount as f64 / LAMPORTS_PER_SOL as f64
             );
         }
 
@@ -128,7 +128,7 @@ pub mod coinflip {
     /**
     The setting result function to determine whether player Win or Lose
     */
-    pub fn set_result(ctx: Context<SetResult>, round_id: u8, is_win: bool) -> Result<()> {
+    pub fn set_result(ctx: Context<SetResult>, round_id: u8, is_win: bool, game_session_id: u64) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let game_bump = ctx.bumps.game_vault;
         let casino_bump = ctx.bumps.casino_vault;
@@ -164,6 +164,7 @@ pub mod coinflip {
                 &[&[
                     ctx.accounts.owner.key().as_ref(),
                     VAULT_AUTHORITY_SEED.as_bytes(),
+                    &game_session_id.to_be_bytes()[..],
                     &[game_bump],
                 ]],
                 vault_balance,
@@ -182,7 +183,7 @@ pub mod coinflip {
     /**
     Double Bet function when the user want to do that after win the game
     */
-    pub fn double_bet(ctx: Context<DoubleBet>) -> Result<()> {
+    pub fn double_bet(ctx: Context<DoubleBet>, game_session_id: u64) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let round = player_pool.round;
         let player = &ctx.accounts.owner;
@@ -219,7 +220,7 @@ pub mod coinflip {
     /**
     The claim Reward function for User after playing and Win
     */
-    pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()> {
+    pub fn claim_reward(ctx: Context<ClaimReward>, game_session_id: u64) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let player = &ctx.accounts.player;
         let game_bump = ctx.bumps.game_vault;
@@ -246,6 +247,7 @@ pub mod coinflip {
             &[&[
                 ctx.accounts.player.key().as_ref(),
                 VAULT_AUTHORITY_SEED.as_bytes(),
+                &game_session_id.to_be_bytes()[..],
                 &[game_bump],
             ]],
             game_balance,
@@ -256,6 +258,16 @@ pub mod coinflip {
         // Add the closing PDA part
         // **game_vault.to_account_info().try_borrow_mut_lamports()? = 0;
         // **player_pool.to_account_info().try_borrow_mut_lamports()? = 0;
+
+        let dest_starting_lamports = ctx.accounts.game_vault.lamports();
+        **ctx.accounts.game_vault.lamports.borrow_mut() = dest_starting_lamports
+            .checked_add(player_pool.to_account_info().lamports())
+            .unwrap();
+        **player_pool.to_account_info().lamports.borrow_mut() = 0;
+
+        let player_pool_account_info = player_pool.to_account_info();
+        let mut account_data = player_pool_account_info.try_borrow_mut_data()?;
+        account_data.fill(0);
 
         Ok(())
     }

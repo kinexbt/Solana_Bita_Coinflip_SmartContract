@@ -55,7 +55,17 @@ pub struct Initialize<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
+pub struct InitPlayGameParams {
+    pub is_head: bool,
+    pub bet_amount: u64,
+    pub game_session_id: u64,
+}
+
 #[derive(Accounts)]
+#[instruction(
+    params: InitPlayGameParams
+)]
 pub struct PlayGame<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
@@ -69,7 +79,7 @@ pub struct PlayGame<'info> {
     #[account(
         init,
         space = 8 + PlayerPool::DATA_SIZE,
-        seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes()],
+        seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
         payer = owner
     )]
@@ -92,7 +102,7 @@ pub struct PlayGame<'info> {
 
     #[account(
         mut,
-        seeds = [&owner.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes()],
+        seeds = [&owner.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
     )]
     /// CHECK: This is not dangerous because we don't read or write from this account
@@ -102,7 +112,17 @@ pub struct PlayGame<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
+pub struct SetResultParams {
+    round_id: u8,
+    is_win: bool,
+    game_session_id: u64
+}
+
 #[derive(Accounts)]
+#[instruction(
+    params: SetResultParams
+)]
 pub struct SetResult<'info> {
     #[account(
         mut,
@@ -123,14 +143,14 @@ pub struct SetResult<'info> {
 
     #[account(
         mut,
-        seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes()],
+        seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump
     )]
     pub player_pool: Account<'info, PlayerPool>,
 
     #[account(
         mut,
-        seeds = [&owner.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes()],
+        seeds = [&owner.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
     )]
     /// CHECK: This is not dangerous because we don't read or write from this account
@@ -147,7 +167,15 @@ pub struct SetResult<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
+pub struct DoubleBetParams {
+    game_session_id: u64
+}
+
 #[derive(Accounts)]
+#[instruction(
+    params: DoubleBetParams
+)]
 pub struct DoubleBet<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
@@ -160,7 +188,7 @@ pub struct DoubleBet<'info> {
 
     #[account(
         mut,
-        seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes()],
+        seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
     )]
     pub player_pool: Account<'info, PlayerPool>,
@@ -182,7 +210,7 @@ pub struct DoubleBet<'info> {
 
     #[account(
         mut,
-        seeds = [&owner.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes()],
+        seeds = [&owner.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
     )]
     /// CHECK: This is not dangerous because we don't read or write from this account
@@ -191,7 +219,15 @@ pub struct DoubleBet<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
+pub struct ClaimRewardParams {
+    game_session_id: u64
+}
+
 #[derive(Accounts)]
+#[instruction(
+    params: ClaimRewardParams
+)]
 pub struct ClaimReward<'info> {
     #[account(
         mut,
@@ -205,7 +241,7 @@ pub struct ClaimReward<'info> {
 
     #[account(
         mut,
-        seeds = [&player.key().as_ref(), PLAYER_POOL_SEED.as_bytes()],
+        seeds = [&player.key().as_ref(), PLAYER_POOL_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump
     )]
     pub player_pool: Account<'info, PlayerPool>,
@@ -227,7 +263,7 @@ pub struct ClaimReward<'info> {
 
     #[account(
         mut,
-        seeds = [&player.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes()],
+        seeds = [&player.key().as_ref(), VAULT_AUTHORITY_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
     )]
     /// CHECK: This is not dangerous because we don't read or write from this account

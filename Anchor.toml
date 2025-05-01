@@ -4,14 +4,14 @@
 resolution = true
 skip-lint = false
 
-[programs.localnet]
-coinflip = "2yGiLmgFhZvHvLYMshTwcAsZ9Ja2wNxxQiSWKhmPmqZe"
+[programs.devnet]
+coinflip = "7EjF94dboc534qg697pBZuSMpxp9gZeCsiRrPTju1AdM"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "./1.json"
 
 [scripts]
