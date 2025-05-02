@@ -230,11 +230,10 @@ describe("Coinflip Game", () => {
   //       playerPool: playerPoolPDA,
   //     })
   //     .transaction();
-  //   tx.feePayer = player.publicKey;
+  //   tx.feePayer = operationAdmin.publicKey;
   //   tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
   //   console.log(await connection.simulateTransaction(tx));
   //   const sig = await sendAndConfirmTransaction(connection, tx, [
-  //     player,
   //     operationAdmin,
   //   ]);
   //   console.log(`Win Sig => https://solscan.io/${sig}`);
@@ -279,18 +278,19 @@ describe("Coinflip Game", () => {
 
   //   // Then set as loss
   //   const lossTx = await program.methods
-  //   .setResult(2, false)
+  //   .setResult(2, false, game_session_id)
   //   .accounts({
   //     owner: player.publicKey,
   //     operator: operationAdmin.publicKey,
+  //     gameVault: gameVaultPDA,
+  //     playerPool: playerPoolPDA,
   //   })
   //   .transaction();
 
-  //   lossTx.feePayer = player.publicKey;
+  //   lossTx.feePayer = operationAdmin.publicKey;
   //   lossTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
   //   console.log(await connection.simulateTransaction(lossTx));
   //   const lossSig = await sendAndConfirmTransaction(connection, lossTx, [
-  //     player,
   //     operationAdmin,
   //   ]);
   //   console.log(`Set Loss Sig => https://solscan.io/${lossSig}`);
