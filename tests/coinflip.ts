@@ -333,93 +333,92 @@ describe("Coinflip Game", () => {
   // });
 
   // it("should allow a winner to claim their reward", async () => {
-    // const betAmount = new anchor.BN(0.2 * LAMPORTS_PER_SOL); // 0.1 SOL
+  //   const betAmount = new anchor.BN(0.2 * LAMPORTS_PER_SOL); // 0.1 SOL
 
-    // console.log("betAmount: ", betAmount);
-    // console.log("Casino Vault Address: ", casinoVaultPDA.toBase58());
+  //   console.log("betAmount: ", betAmount);
+  //   console.log("Casino Vault Address: ", casinoVaultPDA.toBase58());
 
-    // const placeTx = await program.methods
-    //   .playGame(true, betAmount, second_game_session_id)
-    //   .accounts({
-    //     owner: secondPlayer.publicKey,
-    //     operator: operationAdmin.publicKey,
-    //     playerPool : secondPlayerPoolPDA,
-    //     gameVault : secondGameVaultPDA,
-    //   })
-    //   .signers([secondPlayer, operationAdmin])
-    //   .transaction();
-    // placeTx.feePayer = secondPlayer.publicKey;
-    // placeTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    // console.log(await connection.simulateTransaction(placeTx));
-    // const placeSig = await sendAndConfirmTransaction(connection, placeTx, [
-    //   secondPlayer,
-    //   operationAdmin,
-    // ]);
-    // console.log(`Place Bet Sig => https://solscan.io/${placeSig}`);
+  //   const placeTx = await program.methods
+  //     .playGame(true, betAmount, second_game_session_id)
+  //     .accounts({
+  //       owner: secondPlayer.publicKey,
+  //       operator: operationAdmin.publicKey,
+  //       playerPool : secondPlayerPoolPDA,
+  //       gameVault : secondGameVaultPDA,
+  //     })
+  //     .signers([secondPlayer, operationAdmin])
+  //     .transaction();
+  //   placeTx.feePayer = secondPlayer.publicKey;
+  //   placeTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  //   console.log(await connection.simulateTransaction(placeTx));
+  //   const placeSig = await sendAndConfirmTransaction(connection, placeTx, [
+  //     secondPlayer,
+  //     operationAdmin,
+  //   ]);
+  //   console.log(`Place Bet Sig => https://solscan.io/${placeSig}`);
 
-    // await sleep(3000);
+  //   await sleep(3000);
 
-    // const winTx = await program.methods
-    //   .setResult(1, true, second_game_session_id)
-    //   .accounts({
-    //     owner: secondPlayer.publicKey,
-    //     operator: operationAdmin.publicKey,
-    //     gameVault: secondGameVaultPDA,
-    //     playerPool: secondPlayerPoolPDA,
-    //   })
-    //   .transaction();
-    // winTx.feePayer = secondPlayer.publicKey;
-    // winTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    // console.log(await connection.simulateTransaction(winTx));
-    // const winSig = await sendAndConfirmTransaction(connection, winTx, [
-    //   secondPlayer,
-    //   operationAdmin,
-    // ]);
-    // console.log(`Win Sig => https://solscan.io/${winSig}`);
+  //   const winTx = await program.methods
+  //     .setResult(1, true, second_game_session_id)
+  //     .accounts({
+  //       owner: secondPlayer.publicKey,
+  //       operator: operationAdmin.publicKey,
+  //       gameVault: secondGameVaultPDA,
+  //       playerPool: secondPlayerPoolPDA,
+  //     })
+  //     .transaction();
+  //   winTx.feePayer = operationAdmin.publicKey;
+  //   winTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  //   console.log(await connection.simulateTransaction(winTx));
+  //   const winSig = await sendAndConfirmTransaction(connection, winTx, [
+  //     operationAdmin,
+  //   ]);
+  //   console.log(`Win Sig => https://solscan.io/${winSig}`);
 
-    // const playerPool = await program.account.playerPool.fetch(secondPlayerPoolPDA);
-    // console.log("PlayerPoolPDA address => ", secondPlayerPoolPDA.toBase58());
-    // console.log("PlayerPool after Win => ", playerPool);
-    // expect(playerPool.status).to.deep.equal({ win: {} });
+  //   const playerPool = await program.account.playerPool.fetch(secondPlayerPoolPDA);
+  //   console.log("PlayerPoolPDA address => ", secondPlayerPoolPDA.toBase58());
+  //   console.log("PlayerPool after Win => ", playerPool);
+  //   expect(playerPool.status).to.deep.equal({ win: {} });
 
-    // let finalBalance = await connection.getBalance(secondGameVaultPDA);
-    // console.log("GameVaultPDA address => ", secondGameVaultPDA.toBase58());
-    // console.log("Final Game Balance after win is => ", finalBalance);
+  //   let finalBalance = await connection.getBalance(secondGameVaultPDA);
+  //   console.log("GameVaultPDA address => ", secondGameVaultPDA.toBase58());
+  //   console.log("Final Game Balance after win is => ", finalBalance);
 
-    // const initialBalance = await connection.getBalance(secondPlayer.publicKey);
-    // console.log("InitialBalance before claim was => ", initialBalance);
+  //   const initialBalance = await connection.getBalance(secondPlayer.publicKey);
+  //   console.log("InitialBalance before claim was => ", initialBalance);
 
-    // console.log("🚀 ~ it ~ operator:", operationAdmin.publicKey.toBase58())
-    // console.log("If you have this error here: Message: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit..")
-    // console.log("Please deposit solana to operator wallet.")
+  //   console.log("🚀 ~ it ~ operator:", operationAdmin.publicKey.toBase58())
+  //   console.log("If you have this error here: Message: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit..")
+  //   console.log("Please deposit solana to operator wallet.")
 
-    // const tx = await program.methods
-    //   .claimReward(second_game_session_id)
-    //   .accountsStrict({
-    //     operator: operationAdmin.publicKey,
-    //     player: secondPlayer.publicKey,
-    //     gameVault: secondGameVaultPDA,
-    //     playerPool: secondPlayerPoolPDA,
-    //     casinoVault: casinoVaultPDA,
-    //     globalAuthority: globalAuthorityPDA,
-    //     systemProgram: SystemProgram.programId
-    //   })
-    //   .signers([operationAdmin])
-    //   .transaction();
-    // tx.feePayer = operationAdmin.publicKey;
-    // tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    // console.log(await connection.simulateTransaction(tx));
-    // const sig = await sendAndConfirmTransaction(connection, tx, [
-    //   operationAdmin,
-    // ]);
-    // console.log(`Claim Sig => https://solscan.io/${sig}`);
+  //   const tx = await program.methods
+  //     .claimReward(second_game_session_id)
+  //     .accountsStrict({
+  //       operator: operationAdmin.publicKey,
+  //       player: secondPlayer.publicKey,
+  //       gameVault: secondGameVaultPDA,
+  //       playerPool: secondPlayerPoolPDA,
+  //       casinoVault: casinoVaultPDA,
+  //       globalAuthority: globalAuthorityPDA,
+  //       systemProgram: SystemProgram.programId
+  //     })
+  //     .signers([operationAdmin])
+  //     .transaction();
+  //   tx.feePayer = operationAdmin.publicKey;
+  //   tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  //   console.log(await connection.simulateTransaction(tx));
+  //   const sig = await sendAndConfirmTransaction(connection, tx, [
+  //     operationAdmin,
+  //   ]);
+  //   console.log(`Claim Sig => https://solscan.io/${sig}`);
 
-    // finalBalance = await connection.getBalance(secondPlayer.publicKey);
-    // console.log("FinalBalance after claim is {}", finalBalance);
+  //   finalBalance = await connection.getBalance(secondPlayer.publicKey);
+  //   console.log("FinalBalance after claim is {}", finalBalance);
 
-    // await sleep(3000)
+  //   await sleep(3000)
 
-    // expect(finalBalance).to.be.greaterThan(initialBalance);
+  //   expect(finalBalance).to.be.greaterThan(initialBalance);
   // });
 
   // it("should allow updating RTP", async () => {
