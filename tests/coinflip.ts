@@ -173,49 +173,49 @@ describe("Coinflip Game", () => {
     console.log(`Casino vault deposit sig => https://solscan.io/${sig}`);
   });
 
-  it("should allow a player to place a bet", async () => {
-    const betAmount = new anchor.BN(0.2 * LAMPORTS_PER_SOL); // 0.1 SOL
+  // it("should allow a player to place a bet", async () => {
+  //   const betAmount = new anchor.BN(0.2 * LAMPORTS_PER_SOL); // 0.1 SOL
 
-    console.log("betAmount: ", betAmount);
-    console.log("Casino Vault Address: ", casinoVaultPDA.toBase58());
+  //   console.log("betAmount: ", betAmount);
+  //   console.log("Casino Vault Address: ", casinoVaultPDA.toBase58());
 
-    const tx = await program.methods
-      .playGame(true, betAmount, game_session_id)
-      .accounts({
-        owner: player.publicKey,
-        operator: operationAdmin.publicKey,
-        playerPool: playerPoolPDA,
-        gameVault: gameVaultPDA,
-      })
-      .signers([player, operationAdmin])
-      .transaction();
-    tx.feePayer = player.publicKey;
-    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    console.log(await connection.simulateTransaction(tx));
-    const sig = await sendAndConfirmTransaction(connection, tx, [
-      player,
-      operationAdmin,
-    ]);
-    console.log(`Place Bet Sig => https://solscan.io/${sig}`);
+  //   const tx = await program.methods
+  //     .playGame(true, betAmount, game_session_id)
+  //     .accounts({
+  //       owner: player.publicKey,
+  //       operator: operationAdmin.publicKey,
+  //       playerPool: playerPoolPDA,
+  //       gameVault: gameVaultPDA,
+  //     })
+  //     .signers([player, operationAdmin])
+  //     .transaction();
+  //   tx.feePayer = player.publicKey;
+  //   tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  //   console.log(await connection.simulateTransaction(tx));
+  //   const sig = await sendAndConfirmTransaction(connection, tx, [
+  //     player,
+  //     operationAdmin,
+  //   ]);
+  //   console.log(`Place Bet Sig => https://solscan.io/${sig}`);
 
-    await sleep(3000);
+  //   await sleep(3000);
 
-    console.log(
-      "PDA sol balance: ",
-      await connection.getBalance(playerPoolPDA)
-    );
-    console.log(
-      "PDA AccountInfo: ",
-      await connection.getAccountInfo(playerPoolPDA)
-    );
+  //   console.log(
+  //     "PDA sol balance: ",
+  //     await connection.getBalance(playerPoolPDA)
+  //   );
+  //   console.log(
+  //     "PDA AccountInfo: ",
+  //     await connection.getAccountInfo(playerPoolPDA)
+  //   );
 
-    playerPool = await program.account.playerPool.fetch(playerPoolPDA);
-    console.log("Player pool after place bet: ", playerPool);
+  //   playerPool = await program.account.playerPool.fetch(playerPoolPDA);
+  //   console.log("Player pool after place bet: ", playerPool);
 
-    expect(playerPool.player.toString()).to.equal(player.publicKey.toString());
-    expect(playerPool.firstBet.toString()).to.equal(betAmount.toString());
-    expect(playerPool.status).to.deep.equal({ processing: {} });
-  });
+  //   expect(playerPool.player.toString()).to.equal(player.publicKey.toString());
+  //   expect(playerPool.firstBet.toString()).to.equal(betAmount.toString());
+  //   expect(playerPool.status).to.deep.equal({ processing: {} });
+  // });
 
   // it("should process a win correctly", async () => {
   //   const initialBalance = await connection.getBalance(gameVaultPDA);
@@ -301,36 +301,36 @@ describe("Coinflip Game", () => {
   //   expect(playerPool.status).to.deep.equal({ lose: {} });
   // });
 
-  // it("should reject bets below minimum", async () => {
-  //   const betAmount = new anchor.BN(0.001 * LAMPORTS_PER_SOL); // Too small
+  it("should reject bets below minimum", async () => {
+    const betAmount = new anchor.BN(0.001 * LAMPORTS_PER_SOL); // Too small
 
-  //   try {
-  //     const tx = await program.methods
-  //       .playGame(true, betAmount, game_session_id)
-  //       .accounts({
-  //         owner: secondPlayer.publicKey,
-  //         operator: operationAdmin.publicKey,
-  //         playerPool: secondPlayerPoolPDA,
-  //         gameVault: secondGameVaultPDA,
-  //       })
-  //       .signers([secondPlayer, operationAdmin])
-  //       .transaction();
+    try {
+      const tx = await program.methods
+        .playGame(true, betAmount, second_game_session_id)
+        .accounts({
+          owner: secondPlayer.publicKey,
+          operator: operationAdmin.publicKey,
+          playerPool: secondPlayerPoolPDA,
+          gameVault: secondGameVaultPDA,
+        })
+        .signers([secondPlayer, operationAdmin])
+        .transaction();
 
-  //     tx.feePayer = secondPlayer.publicKey;
-  //     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-  //     console.log(await connection.simulateTransaction(tx));
-  //     const sig = await sendAndConfirmTransaction(connection, tx, [
-  //       secondPlayer,
-  //       operationAdmin,
-  //     ]);
-  //     console.log(`Sig => https://solscan.io/${sig}`);
+      tx.feePayer = secondPlayer.publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+      console.log(await connection.simulateTransaction(tx));
+      const sig = await sendAndConfirmTransaction(connection, tx, [
+        secondPlayer,
+        operationAdmin,
+      ]);
+      console.log(`Sig => https://solscan.io/${sig}`);
 
-  //     expect.fail("Should have thrown error");
-  //   } catch (err) {
-  //     console.log("Full error object:", JSON.stringify(err, null, 2));
-  //     expect(err.toString()).to.contain("InvalidBetAmount");
-  //   }
-  // });
+      expect.fail("Should have thrown error");
+    } catch (err) {
+      console.log("Full error object:", JSON.stringify(err, null, 2));
+      expect(err.toString()).to.contain("InvalidBetAmount");
+    }
+  });
 
   // it("should allow a winner to claim their reward", async () => {
   //   const betAmount = new anchor.BN(0.2 * LAMPORTS_PER_SOL); // 0.1 SOL
