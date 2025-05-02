@@ -331,7 +331,7 @@ pub struct PlayerPool {
 }
 
 impl PlayerPool {
-    pub const DATA_SIZE: usize = 8 + 5 + 1 + 32; // 160
+    pub const DATA_SIZE: usize = 8 + 5 + 1 + 32; // 46
 
     pub fn update_round(&mut self, game_statue: GameStatus, round: u8) {
         self.status = game_statue;

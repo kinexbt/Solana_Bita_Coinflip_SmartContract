@@ -5,13 +5,13 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-coinflip = "7EjF94dboc534qg697pBZuSMpxp9gZeCsiRrPTju1AdM"
+coinflip = "7pGSQrRg7wrLTXXKBGqQ5GB8TjvABcsur4cHkVyyJrTD"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
+cluster = "https://devnet.helius-rpc.com/?api-key=27fd6baa-75e9-4d39-9832-d5a43419ad78"
 wallet = "./1.json"
 
 [scripts]

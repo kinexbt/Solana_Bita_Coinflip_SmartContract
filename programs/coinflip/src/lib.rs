@@ -12,7 +12,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("2yGiLmgFhZvHvLYMshTwcAsZ9Ja2wNxxQiSWKhmPmqZe");
+declare_id!("7pGSQrRg7wrLTXXKBGqQ5GB8TjvABcsur4cHkVyyJrTD");
 
 #[program]
 pub mod coinflip {
@@ -25,13 +25,6 @@ pub mod coinflip {
         update_admin: Pubkey,
     ) -> Result<()> {
         let global_authority = &mut ctx.accounts.global_authority;
-
-        // sol_transfer_user(
-        //     ctx.accounts.admin.to_account_info().clone(),
-        //     ctx.accounts.casino_vault.to_account_info().clone(),
-        //     ctx.accounts.system_program.to_account_info().clone(),
-        //     ctx.accounts.rent.minimum_balance(0),
-        // )?;
 
         global_authority.super_admin = ctx.accounts.admin.key();
         global_authority.operation_authority = operate_admin.key();
@@ -53,7 +46,7 @@ pub mod coinflip {
         ctx: Context<PlayGame>,
         is_head: bool,
         bet_amount: u64,
-        game_session_id: u64,
+        _game_session_id: u64,
     ) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let player = &ctx.accounts.owner;
@@ -167,6 +160,10 @@ pub mod coinflip {
 
             player_pool.status = GameStatus::Win
         } else {
+            player_pool.status = GameStatus::Lose;
+
+            let player_pool_lamports = player_pool.to_account_info().lamports();
+
             sol_transfer_with_signer(
                 game_vault.to_account_info(),
                 casino_vault.to_account_info(),
@@ -180,17 +177,15 @@ pub mod coinflip {
                 vault_balance,
             )?;
 
-            player_pool.status = GameStatus::Lose;
-
-            let dest_starting_lamports = ctx.accounts.game_vault.lamports();
-            **ctx.accounts.game_vault.lamports.borrow_mut() = dest_starting_lamports
+            let dest_starting_lamports = ctx.accounts.casino_vault.lamports();
+            **ctx.accounts.casino_vault.lamports.borrow_mut() = dest_starting_lamports
                 .checked_add(player_pool.to_account_info().lamports())
                 .unwrap();
             **player_pool.to_account_info().lamports.borrow_mut() = 0;
 
             let player_pool_account_info = player_pool.to_account_info();
-            let mut account_data = player_pool_account_info.try_borrow_mut_data()?;
-            account_data.fill(0);
+            let mut player_pool_data = player_pool_account_info.try_borrow_mut_data()?;
+            player_pool_data.fill(0);
         }
 
         Ok(())
@@ -241,7 +236,8 @@ pub mod coinflip {
         let player = &ctx.accounts.player;
         let game_bump = ctx.bumps.game_vault;
         let game_vault = &mut ctx.accounts.game_vault;
-        let game_balance = game_vault.lamports();
+        let casino_vault = &mut ctx.accounts.casino_vault;
+        let vault_balance = game_vault.lamports();
 
         require!(
             player_pool.status == GameStatus::Win,
@@ -252,13 +248,12 @@ pub mod coinflip {
             "Withdrawer: {}
             Amount: {}",
             player.key(),
-            game_balance,
+            vault_balance,
         );
 
-        // Transfer SOL to the winner from the PDA
         sol_transfer_with_signer(
             game_vault.to_account_info(),
-            ctx.accounts.player.to_account_info(),
+            casino_vault.to_account_info(),
             ctx.accounts.system_program.to_account_info(),
             &[&[
                 ctx.accounts.player.key().as_ref(),
@@ -266,21 +261,18 @@ pub mod coinflip {
                 &game_session_id.to_be_bytes()[..],
                 &[game_bump],
             ]],
-            game_balance,
+            vault_balance,
         )?;
 
-        player_pool.status = GameStatus::Finished;
-
-        let dest_starting_lamports = ctx.accounts.game_vault.lamports();
-        **ctx.accounts.game_vault.lamports.borrow_mut() = dest_starting_lamports
+        let dest_starting_lamports = ctx.accounts.casino_vault.lamports();
+        **ctx.accounts.casino_vault.lamports.borrow_mut() = dest_starting_lamports
             .checked_add(player_pool.to_account_info().lamports())
             .unwrap();
         **player_pool.to_account_info().lamports.borrow_mut() = 0;
 
         let player_pool_account_info = player_pool.to_account_info();
-        let mut account_data = player_pool_account_info.try_borrow_mut_data()?;
-        account_data.fill(0);
-
+        let mut player_pool_data = player_pool_account_info.try_borrow_mut_data()?;
+        player_pool_data.fill(0);
         Ok(())
     }
 
