@@ -253,7 +253,7 @@ pub mod coinflip {
 
         sol_transfer_with_signer(
             game_vault.to_account_info(),
-            casino_vault.to_account_info(),
+            player.to_account_info(),
             ctx.accounts.system_program.to_account_info(),
             &[&[
                 ctx.accounts.player.key().as_ref(),
