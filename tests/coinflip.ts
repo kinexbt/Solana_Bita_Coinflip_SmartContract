@@ -189,7 +189,7 @@ describe("Coinflip Game", () => {
   //     })
   //     .signers([player, operationAdmin])
   //     .transaction();
-  //   tx.feePayer = player.publicKey;
+  //   tx.feePayer = operationAdmin.publicKey;
   //   tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
   //   console.log(await connection.simulateTransaction(tx));
   //   const sig = await sendAndConfirmTransaction(connection, tx, [
@@ -311,7 +311,7 @@ describe("Coinflip Game", () => {
   //       .signers([secondPlayer, operationAdmin])
   //       .transaction();
 
-  //     tx.feePayer = secondPlayer.publicKey;
+  //     tx.feePayer = operationAdmin.publicKey;
   //     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
   //     console.log(await connection.simulateTransaction(tx));
   //     const sig = await sendAndConfirmTransaction(connection, tx, [
@@ -343,7 +343,7 @@ describe("Coinflip Game", () => {
       })
       .signers([secondPlayer, operationAdmin])
       .transaction();
-    placeTx.feePayer = secondPlayer.publicKey;
+    placeTx.feePayer = operationAdmin.publicKey;
     placeTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
     console.log(await connection.simulateTransaction(placeTx));
     const placeSig = await sendAndConfirmTransaction(connection, placeTx, [

@@ -12,7 +12,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("3bTdj7J5jzTJ1BByYzUkyNFdCUBejB1TcG6UM5czR6up");
+declare_id!("AF8kyU67aGDW42CZMz3tpuJL1hu7e3Xoxv614t1FsSzq");
 
 #[program]
 pub mod coinflip {
@@ -177,8 +177,8 @@ pub mod coinflip {
                 vault_balance,
             )?;
 
-            let dest_starting_lamports = ctx.accounts.casino_vault.lamports();
-            **ctx.accounts.casino_vault.lamports.borrow_mut() = dest_starting_lamports
+            let dest_starting_lamports = ctx.accounts.operator.lamports();
+            **ctx.accounts.operator.lamports.borrow_mut() = dest_starting_lamports
                 .checked_add(player_pool.to_account_info().lamports())
                 .unwrap();
             **player_pool.to_account_info().lamports.borrow_mut() = 0;
@@ -264,8 +264,8 @@ pub mod coinflip {
             vault_balance,
         )?;
 
-        let dest_starting_lamports = ctx.accounts.casino_vault.lamports();
-        **ctx.accounts.casino_vault.lamports.borrow_mut() = dest_starting_lamports
+        let dest_starting_lamports = ctx.accounts.operator.lamports();
+        **ctx.accounts.operator.lamports.borrow_mut() = dest_starting_lamports
             .checked_add(player_pool.to_account_info().lamports())
             .unwrap();
         **player_pool.to_account_info().lamports.borrow_mut() = 0;
