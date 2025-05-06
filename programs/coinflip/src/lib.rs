@@ -12,7 +12,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("7pGSQrRg7wrLTXXKBGqQ5GB8TjvABcsur4cHkVyyJrTD");
+declare_id!("3bTdj7J5jzTJ1BByYzUkyNFdCUBejB1TcG6UM5czR6up");
 
 #[program]
 pub mod coinflip {
@@ -194,7 +194,7 @@ pub mod coinflip {
     /**
     Double Bet function when the user want to do that after win the game
     */
-    pub fn double_bet(ctx: Context<DoubleBet>, game_session_id: u64) -> Result<()> {
+    pub fn double_bet(ctx: Context<DoubleBet>, is_head: bool, game_session_id: u64) -> Result<()> {
         let player_pool = &mut ctx.accounts.player_pool;
         let round = player_pool.round;
         let player = &ctx.accounts.owner;

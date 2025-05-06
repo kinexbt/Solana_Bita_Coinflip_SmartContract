@@ -81,7 +81,7 @@ pub struct PlayGame<'info> {
         space = 8 + PlayerPool::DATA_SIZE,
         seeds = [&owner.key().as_ref(), PLAYER_POOL_SEED.as_bytes(), &params.game_session_id.to_be_bytes()[..]],
         bump,
-        payer = owner
+        payer = operator
     )]
     pub player_pool: Account<'info, PlayerPool>,
 
@@ -169,6 +169,7 @@ pub struct SetResult<'info> {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
 pub struct DoubleBetParams {
+    is_head: bool,
     game_session_id: u64
 }
 

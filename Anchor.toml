@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-coinflip = "7pGSQrRg7wrLTXXKBGqQ5GB8TjvABcsur4cHkVyyJrTD"
+coinflip = "3bTdj7J5jzTJ1BByYzUkyNFdCUBejB1TcG6UM5czR6up"
 
 [registry]
 url = "https://anchor.projectserum.com"
