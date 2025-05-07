@@ -16,7 +16,7 @@ pub struct GlobalPool {
 }
 
 impl GlobalPool {
-    pub const DATA_SIZE: usize = 32 + 32 + 32 + 32 + 8 + 8 + 8 + 8; //  160
+    pub const DATA_SIZE: usize = 32 + 32 + 32 + 32 + 8 + 8 + 8; //  152
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Default, Clone, PartialEq)]
@@ -332,7 +332,7 @@ pub struct PlayerPool {
 }
 
 impl PlayerPool {
-    pub const DATA_SIZE: usize = 8 + 8 + 5 + 1 + 32; // 62
+    pub const DATA_SIZE: usize = 8 + 5 + 1 + 32; // 46
 
     pub fn update_round(&mut self, game_statue: GameStatus, round: u8) {
         self.status = game_statue;
