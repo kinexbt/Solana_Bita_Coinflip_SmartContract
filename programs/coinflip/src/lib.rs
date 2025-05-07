@@ -89,7 +89,7 @@ pub mod coinflip {
 
         // Transfer rent fee for PDA of player pool
         sol_transfer_user(
-            ctx.accounts.owner.to_account_info().clone(),
+            ctx.accounts.operator.to_account_info().clone(),
             player_pool.to_account_info().clone(),
             ctx.accounts.system_program.to_account_info().clone(),
             ctx.accounts.rent.minimum_balance(0),
