@@ -62,8 +62,8 @@ const updateAdmin = Keypair.fromSecretKey(
 // 97hiuq2aRBcfPwjTecWbw8XzAQw3LRaPipK3XCx1STmV
 
 const newAdmin = Keypair.generate();
-const game_session_id = new anchor.BN(1); // 0.1 SOL
-const second_game_session_id = new anchor.BN(2); // 0.1 SOL
+const game_session_id = new anchor.BN(1);
+const second_game_session_id = new anchor.BN(2);
 
 const connection =
   cluster == "localnet"
