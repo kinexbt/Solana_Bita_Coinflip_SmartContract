@@ -53,7 +53,7 @@ pub mod coinflip {
         let global_authority = &ctx.accounts.global_authority;
 
         require!(
-            global_authority.min_bet_amount < bet_amount,
+            global_authority.min_bet_amount <= bet_amount,
             GameError::InvalidBetAmount
         );
 
